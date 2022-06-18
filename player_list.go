@@ -8,9 +8,16 @@ import (
 
 type PlayerList map[string]bool
 
+func (pl PlayerList) Array() (a []string) {
+	for player := range pl {
+		a = append(a, player)
+	}
+	return
+}
+
 type PlayerListUpdateHandler struct {
-	Join   func(...string)
-	Leave  func(...string)
+	Join   func(string)
+	Leave  func(string)
 	Update func(PlayerList)
 }
 
@@ -18,7 +25,7 @@ var playerListUpdateHandlers []*PlayerListUpdateHandler
 var playerListUpdateHandlersMu sync.RWMutex
 
 var playerListMu sync.RWMutex
-var playerList PlayerList
+var playerList = make(PlayerList)
 
 func Players() PlayerList {
 	playerListMu.Lock()
@@ -45,8 +52,8 @@ func handleLeavePlayer(name string) {
 
 	playerListUpdateHandlersMu.RLock()
 	defer playerListUpdateHandlersMu.RUnlock()
-	
-	for _, h:= range playerListUpdateHandlers {
+
+	for _, h := range playerListUpdateHandlers {
 		if h.Leave != nil {
 			h.Leave(name)
 		}
@@ -64,9 +71,9 @@ func handleJoinPlayer(name string) {
 	playerListUpdateHandlersMu.RLock()
 	defer playerListUpdateHandlersMu.RUnlock()
 
-	for _, h:= range playerListUpdateHandlers {
-		if h.Leave != nil {
-			h.Leave(name)
+	for _, h := range playerListUpdateHandlers {
+		if h.Join != nil {
+			h.Join(name)
 		}
 		if h.Update != nil {
 			h.Update(Players())
