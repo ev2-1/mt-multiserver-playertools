@@ -11,6 +11,7 @@ type ClickHandler struct {
 	Pos [3]int16
 	Srv string
 
+	// Handler gets called when clicked (mt.Dig Action)
 	Handler func(cc *proxy.ClientConn)
 }
 

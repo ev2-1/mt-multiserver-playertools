@@ -16,8 +16,13 @@ func (pl PlayerList) Array() (a []string) {
 }
 
 type PlayerListUpdateHandler struct {
+	// Join gets called when a client joins the proxy
 	Join   func(string)
+
+	// Leave gets called when a client leaves the proxy (any reason)
 	Leave  func(string)
+
+	// Update gets called everytime the PlayerList changes
 	Update func(PlayerList)
 }
 
@@ -27,6 +32,7 @@ var playerListUpdateHandlersMu sync.RWMutex
 var playerListMu sync.RWMutex
 var playerList = make(PlayerList)
 
+// Players retuns a PlayerList of all players
 func Players() PlayerList {
 	playerListMu.Lock()
 	defer playerListMu.Unlock()
