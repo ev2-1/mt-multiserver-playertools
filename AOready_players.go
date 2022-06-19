@@ -9,6 +9,8 @@ import (
 var _AOReadyClts PlayerList
 var _AOReadyCltsMu sync.RWMutex
 
+// AOReadyClts retuns a copy of a PlayerList of all clients that are "AOReady"
+// InitAOReadyClts has to be called before updates happen
 func AOReadyClts() PlayerList {
 	_AOReadyCltsMu.RLock()
 	defer _AOReadyCltsMu.RUnlock()
@@ -41,7 +43,8 @@ func _AOUnreadyClt(cc *proxy.ClientConn) {
 
 var _AOReadyCltInitMu sync.Once
 
-func initAOReadyClts() {
+// InitAOReadyClts registers proxy ClientHandlers necessary for AOReadyClts to work
+func InitAOReadyClts() {
 	_AOReadyCltInitMu.Do(func() {
 		proxy.RegisterClientHandler(&proxy.ClientHandler{
 			AOReady: func(cc *proxy.ClientConn) {

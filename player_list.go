@@ -35,7 +35,7 @@ func Players() PlayerList {
 }
 
 func RegisterPlayerListUpdateHandler(h *PlayerListUpdateHandler) {
-	registerProxyPlayerlistHandlers()
+	initProxyPlayerlistHandlers()
 
 	playerListUpdateHandlersMu.Lock()
 	defer playerListUpdateHandlersMu.Unlock()
@@ -85,7 +85,7 @@ func handleJoinPlayer(cc *proxy.ClientConn) {
 	}
 }
 
-func registerProxyPlayerlistHandlers() {
+func initProxyPlayerlistHandlers() {
 	initPlayerListUpdateHandlerOnce.Do(func() {
 		proxy.RegisterClientHandler(&proxy.ClientHandler{
 			Join: func(cc *proxy.ClientConn) string {
