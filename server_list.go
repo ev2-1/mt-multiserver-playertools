@@ -3,8 +3,8 @@ package playerTools
 import (
 	"github.com/HimbeerserverDE/mt-multiserver-proxy"
 
-	"sync"
 	"fmt"
+	"sync"
 )
 
 var srvLists = make(map[string]PlayerList)
@@ -37,7 +37,7 @@ func srvJoin(cc *proxy.ClientConn, server string) {
 	fmt.Println("Join", name, server)
 
 	srvListsMu.Lock()
-	
+
 	if srvLists[server] == nil {
 		srvLists[server] = make(PlayerList)
 	}
@@ -119,7 +119,7 @@ var initSrvListsMu sync.Once
 func initSrvLists() {
 	initSrvListsMu.Do(func() {
 		fmt.Println("HEREHREHHREHREHRHEHREHRHEHREHRHE")
-	
+
 		proxy.RegisterClientHandler(&proxy.ClientHandler{
 			// Join
 			AOReady: func(cc *proxy.ClientConn) {

@@ -22,7 +22,7 @@ func RegisterClick(c *ClickHandler) {
 	clickHandlers = append(clickHandlers, c)
 }
 
-var clickHandlers   []*ClickHandler
+var clickHandlers []*ClickHandler
 var clickHandlersMu sync.RWMutex
 
 var initRegisterClickMu sync.Once
@@ -39,7 +39,7 @@ func initRegisterClick() {
 				default:
 					return false
 				}
-				
+
 				if cmd.Action == mt.Dig { // if click
 					go func() {
 						clickHandlersMu.RLock()
@@ -51,7 +51,7 @@ func initRegisterClick() {
 						}
 					}()
 				}
-			
+
 				return false
 			},
 		})
