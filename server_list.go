@@ -31,7 +31,9 @@ func ServerPlayers(server string) int {
 	return len(srvLists[server])
 }
 
-func srvJoin(name, server string) {
+func srvJoin(cc *proxy.ClientConn, server string) {
+	name := cc.Name()
+
 	fmt.Println("Join", name, server)
 
 	srvListsMu.Lock()
@@ -40,7 +42,7 @@ func srvJoin(name, server string) {
 		srvLists[server] = make(PlayerList)
 	}
 
-	srvLists[server][name] = true
+	srvLists[server][name] = cc
 	srvListsMu.Unlock()
 
 	updateSrvPlayerList(server)
@@ -48,7 +50,9 @@ func srvJoin(name, server string) {
 	updateSrvPlayerListGlobal()
 }
 
-func srvLeave(name, server string) {
+func srvLeave(cc *proxy.ClientConn, server string) {
+	name := cc.Name()
+
 	fmt.Println("Leave", name, server)
 
 	srvListsMu.Lock()
@@ -119,16 +123,14 @@ func initSrvLists() {
 		proxy.RegisterClientHandler(&proxy.ClientHandler{
 			// Join
 			AOReady: func(cc *proxy.ClientConn) {
-				srvJoin(cc.Name(), cc.ServerName())
+				srvJoin(cc, cc.ServerName())
 			},
 			Leave: func(cc *proxy.ClientConn, _ *proxy.Leave) {
-				srvLeave(cc.Name(), cc.ServerName())
+				srvLeave(cc, cc.ServerName())
 			},
 			Hop: func(cc *proxy.ClientConn, s, d string) {
-				name := cc.Name()
-
-				srvLeave(name, s)
-				srvJoin(name, d)
+				srvLeave(cc, s)
+				srvJoin(cc, d)
 			},
 		})
 	})

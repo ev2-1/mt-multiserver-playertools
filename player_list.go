@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type PlayerList map[string]bool
+type PlayerList map[string]*proxy.ClientConn
 
 func (pl PlayerList) Array() (a []string) {
 	for player := range pl {
@@ -45,7 +45,9 @@ func RegisterPlayerListUpdateHandler(h *PlayerListUpdateHandler) {
 
 var initPlayerListUpdateHandlerOnce sync.Once
 
-func handleLeavePlayer(name string) {
+func handleLeavePlayer(cc *proxy.ClientConn) {
+	name := cc.Name()
+
 	playerListMu.Lock()
 	delete(playerList, name)
 	playerListMu.Unlock()
@@ -63,9 +65,11 @@ func handleLeavePlayer(name string) {
 	}
 }
 
-func handleJoinPlayer(name string) {
+func handleJoinPlayer(cc *proxy.ClientConn) {
+	name := cc.Name()
+
 	playerListMu.Lock()
-	playerList[name] = true
+	playerList[name] = cc
 	playerListMu.Unlock()
 
 	playerListUpdateHandlersMu.RLock()
@@ -85,11 +89,11 @@ func registerProxyPlayerlistHandlers() {
 	initPlayerListUpdateHandlerOnce.Do(func() {
 		proxy.RegisterClientHandler(&proxy.ClientHandler{
 			Join: func(cc *proxy.ClientConn) string {
-				handleJoinPlayer(cc.Name())
+				handleJoinPlayer(cc)
 				return ""
 			},
 			Leave: func(cc *proxy.ClientConn, _ *proxy.Leave) {
-				handleLeavePlayer(cc.Name())
+				handleLeavePlayer(cc)
 			},
 		})
 	})
