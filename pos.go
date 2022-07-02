@@ -11,7 +11,7 @@ type PosHandler struct {
 	Update func(*proxy.ClientConn, mt.PlayerPos)
 }
 
-var posHandlers   []*PosHandler
+var posHandlers []*PosHandler
 var posHandlersMu sync.RWMutex
 
 func RegisterPosHandler(h *PosHandler) {
@@ -74,7 +74,7 @@ func InitPos() {
 					setPos(cc.Name(), cmd.Pos)
 					updatePos(cc, cmd.Pos)
 				}
-			
+
 				return false
 			},
 		})

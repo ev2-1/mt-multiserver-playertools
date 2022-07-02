@@ -17,10 +17,10 @@ func (pl PlayerList) Array() (a []string) {
 
 type PlayerListUpdateHandler struct {
 	// Join gets called when a client joins the proxy
-	Join   func(string)
+	Join func(string)
 
 	// Leave gets called when a client leaves the proxy (any reason)
-	Leave  func(string)
+	Leave func(string)
 
 	// Update gets called everytime the PlayerList changes
 	Update func(PlayerList)

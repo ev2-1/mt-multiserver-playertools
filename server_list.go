@@ -9,7 +9,6 @@ import (
 var srvLists = make(map[string]PlayerList)
 var srvListsMu sync.RWMutex
 
-
 // Returns a copy of all server playerlist indexed by server name
 func ServerPlayerLists() map[string]PlayerList {
 	srvListsMu.RLock()
@@ -135,13 +134,13 @@ func initSrvLists() {
 
 type SrvPlayerListHandler struct {
 	// gets called when client Joins a server
-	Join         func(name, server string)
+	Join func(name, server string)
 
 	// gets called when client Leaves a server
-	Leave        func(name, server string)
+	Leave func(name, server string)
 
 	// gets called when anything changes with which server changed
-	Update       func(names PlayerList, server string)
+	Update func(names PlayerList, server string)
 
 	// gets called everytime anything changes
 	UpdateGlobal func(map[string]PlayerList)
@@ -149,7 +148,6 @@ type SrvPlayerListHandler struct {
 
 var srvPlayerListHandlers []*SrvPlayerListHandler
 var srvPlayerListHandlersMu sync.RWMutex
-
 
 // Registers SrvPlayerListHandler
 func RegisterSrvPlayerListHandler(h *SrvPlayerListHandler) {
